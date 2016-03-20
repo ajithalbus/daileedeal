@@ -21,6 +21,10 @@ public class MainActivity extends ActionBarActivity {
     private WebView mWebView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+       // ActionBar actionBar = getActionBar();
+
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
