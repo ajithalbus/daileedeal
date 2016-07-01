@@ -1,12 +1,12 @@
 {
   "project_info": {
-    "project_number": "564698135954",
-    "project_id": "daileedeal-764b2"
+    "project_number": "613715390361",
+    "project_id": "daileedeal-b3686"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:564698135954:android:d51edf4e83cb01d1",
+        "mobilesdk_app_id": "1:613715390361:android:d51edf4e83cb01d1",
         "android_client_info": {
           "package_name": "mak.livewire.daileedeal"
         }
@@ -14,7 +14,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDKWhQiVGSMTV3CC5krgsoquSlpT-5FD7o"
+          "current_key": "AIzaSyCNI4wXg5IlTxft06yArHkuzT0SMJjqIkY"
         }
       ],
       "services": {
