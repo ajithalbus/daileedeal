@@ -22,6 +22,8 @@ import android.content.pm.ActivityInfo;
 import android.widget.Toast;
 import android.os.Handler;
 import android.view.Window;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.messaging.FirebaseMessaging;
 public class MainActivity extends ActionBarActivity {
    public ProgressBar progress;
     private WebView mWebView;
@@ -30,7 +32,7 @@ public class MainActivity extends ActionBarActivity {
     private ActionBarDrawerToggle mDrawerToggle;
     private DrawerLayout mDrawerLayout;
     private String mActivityTitle;
-    private final int links[]=new int[] {59,115,60,61,62,63,64,65,66};
+    private final int links[]=new int[] {116,60,61,62,63,64,65,66};
     private final String base_link="https://daileedeal.com/index.php?route=product/category&path=";
 
     @Override
@@ -136,7 +138,7 @@ mWebView.loadUrl("file:///android_asset/splash.html");
     }
 
     private void addDrawerItems() {
-        String[] osArray = {"Home", "Fruits", "Vegetables", "Beverages", "Grocery & Staples", "Baby Care","Packaged Food","Household", "Bread and Dairy","Personal Care"};
+        String[] osArray = {"Home", "Organic Products", "Beverages", "Grocery & Staples", "Baby Care","Packaged Food","Household", "Bread and Dairy","Personal Care"};
         mAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
 

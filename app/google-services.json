@@ -1,31 +1,20 @@
 {
   "project_info": {
-    "project_number": "338271650582",
-    "firebase_url": "https://daileedeal-8658e.firebaseio.com",
-    "project_id": "daileedeal-8658e",
-    "storage_bucket": "daileedeal-8658e.appspot.com"
+    "project_number": "564698135954",
+    "project_id": "daileedeal-764b2"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:338271650582:android:d51edf4e83cb01d1",
+        "mobilesdk_app_id": "1:564698135954:android:d51edf4e83cb01d1",
         "android_client_info": {
           "package_name": "mak.livewire.daileedeal"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "338271650582-ddcpi37lpvcvq2p7h462cbtsunict9ov.apps.googleusercontent.com",
-          "client_type": 3
-        },
-        {
-          "client_id": "338271650582-ie0em0725sm9q4n5ls2r2h0ggmk3ni9d.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC7Z6l-t2TFxNhcNZtgBGCb74e0Evpd-PU"
+          "current_key": "AIzaSyDKWhQiVGSMTV3CC5krgsoquSlpT-5FD7o"
         }
       ],
       "services": {
@@ -37,7 +26,7 @@
           "other_platform_oauth_client": []
         },
         "ads_service": {
-          "status": 2
+          "status": 1
         }
       }
     }
