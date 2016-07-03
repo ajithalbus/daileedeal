@@ -1,4 +1,4 @@
-package mak.livewire.daileedeal;
+package mak.livewire.daileedeal.gcm;
 
 /**
  * Created by mak on 02-07-2016.
