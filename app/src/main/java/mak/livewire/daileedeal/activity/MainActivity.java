@@ -8,6 +8,8 @@ import android.view.View;
 import android.webkit.WebBackForwardList;
 import android.widget.ArrayAdapter;
 import android.graphics.Bitmap;
+import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.os.Bundle;
 import android.view.Menu;
@@ -25,6 +27,8 @@ import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -35,8 +39,10 @@ import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.*;
 import android.util.Log;
+import android.widget.Toast;
 
 import mak.livewire.daileedeal.CustomSwipeRefreshLayout;
+import mak.livewire.daileedeal.Jsongetter;
 import mak.livewire.daileedeal.gcm.QuickstartPreferences;
 import mak.livewire.daileedeal.R;
 import mak.livewire.daileedeal.gcm.RegistrationIntentService;
@@ -59,6 +65,7 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
     private Intent intent;
     private String noti_addr;
     private CustomSwipeRefreshLayout mRefreshLayout;
+    private ImageButton button;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -67,8 +74,12 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//barcode scanner
 
 
+
+
+        //new Jsongetter(this).getTags();
         noti_addr = "https://daileedeal.com";
         intent = getIntent();
         if (intent.getIntExtra("from_noti", 0) == 1)
@@ -107,6 +118,17 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
         // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+// barcode
+        button=(ImageButton)findViewById(R.id.fab);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+
+                integrator.initiateScan();
+            }
+        });
+
 
 //material toolbar
         //toolbar material view
@@ -289,6 +311,28 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
             */
             }
 
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        if(result != null) {
+            if(result.getContents() == null) {
+                Log.d("MainActivity", "Cancelled scan");
+                Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Error in BarCode.", Snackbar.LENGTH_SHORT).show();
+
+                //Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+            } else {
+                Log.d("MainActivity", "Scanned");
+                Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Loading Item.", Snackbar.LENGTH_SHORT).show();
+                mWebView.loadUrl("https://daileedeal.com/index.php?route=product/product&manufacturer_id=14&product_id="+result.getContents());
+               // Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            // This is important, otherwise the result will not be passed to the fragment
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 

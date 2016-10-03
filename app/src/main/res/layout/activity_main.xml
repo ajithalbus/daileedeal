@@ -38,7 +38,28 @@
         android:id="@+id/activity_main_webview"/>
 
     </mak.livewire.daileedeal.CustomSwipeRefreshLayout>
-    <!-- <ListView android:id="@+id/left_drawer"
+
+    <android.support.design.widget.FloatingActionButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
+        android:src="@drawable/baricon"
+
+        android:id="@+id/fab"
+        android:translationZ="3dp" />
+
+   <!-- <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="New Button"
+        android:id="@+id/button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+     <ListView android:id="@+id/left_drawer"
          android:layout_width="240dp"
          android:layout_height="match_parent"
          android:layout_gravity="start"

@@ -4,7 +4,8 @@ package mak.livewire.daileedeal.activity;
 
 
 /**
- * A simple {@link Fragment} subclass.
+ * created my mak.
+ * not implemented yet
  */
 
 import android.content.Context;
