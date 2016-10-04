@@ -50,7 +50,7 @@
         android:src="@drawable/baricon"
 
         android:id="@+id/fab"
-        android:translationZ="3dp" />
+        android:translationZ="15dp" />
 
    <!-- <Button
         android:layout_width="wrap_content"

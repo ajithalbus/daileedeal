@@ -7,9 +7,9 @@ android {
     defaultConfig {
         applicationId "mak.livewire.daileedeal"
         minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 7
-        versionName "16.10.3"
+        targetSdkVersion 23
+        versionCode 8
+        versionName "16.10.4"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }

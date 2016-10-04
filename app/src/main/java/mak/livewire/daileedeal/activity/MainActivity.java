@@ -1,5 +1,8 @@
 package mak.livewire.daileedeal.activity;
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -41,6 +44,9 @@ import android.support.v7.app.*;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import mak.livewire.daileedeal.CustomSwipeRefreshLayout;
 import mak.livewire.daileedeal.Jsongetter;
 import mak.livewire.daileedeal.gcm.QuickstartPreferences;
@@ -49,6 +55,7 @@ import mak.livewire.daileedeal.gcm.RegistrationIntentService;
 
 public class MainActivity extends AppCompatActivity implements CustomSwipeRefreshLayout.CanChildScrollUpCallback,FragmentDrawer.FragmentDrawerListener {
     //public ProgressBar progress;
+    private static final int REQUEST_CODE_SOME_FEATURES_PERMISSIONS=138;
     private FragmentDrawer drawerFragment;
     private WebView mWebView;
     private ListView mDrawerList;
@@ -123,9 +130,31 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+                if(android.os.Build.VERSION.SDK_INT>=23) {
+                    int hasCameraPermission = checkSelfPermission(Manifest.permission.CAMERA);
+                    //int hasSMSPermission = checkSelfPermission( Manifest.permission.SEND_SMS );
+                    List<String> permissions = new ArrayList<String>();
+                    if (hasCameraPermission != PackageManager.PERMISSION_GRANTED) {
+                        permissions.add(Manifest.permission.CAMERA);
+                    }
 
-                integrator.initiateScan();
+
+
+
+                    if (!permissions.isEmpty()) {
+                        requestPermissions(permissions.toArray(new String[permissions.size()]), REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
+                    }
+                    else
+                    { IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+
+                        integrator.initiateScan();}
+                }
+                else
+                { IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+
+                integrator.initiateScan();}
+
+
             }
         });
 
@@ -271,6 +300,29 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
     boolean doubleBackToExitPressedOnce = false;
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_CODE_SOME_FEATURES_PERMISSIONS: {
+                for (int i = 0; i < permissions.length; i++) {
+                    if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("Permissions", "Permission Granted: " + permissions[i]);
+                        IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+
+                        integrator.initiateScan();
+                    } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                        Log.d("Permissions", "Permission Denied: " + permissions[i]);
+                        Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Camera Permissions are needed for Barcode scanner.", Snackbar.LENGTH_SHORT).show();
+
+                    }
+                }
+            }
+            break;
+            default: {
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            }
+        }
+    }
+    @Override
     public void onBackPressed() {
         WebBackForwardList mWebBackForwardList = mWebView.copyBackForwardList();
         String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex()-1).getUrl();
@@ -321,13 +373,13 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
         if(result != null) {
             if(result.getContents() == null) {
                 Log.d("MainActivity", "Cancelled scan");
-                Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Error in BarCode.", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "No Bar Code Read.", Snackbar.LENGTH_SHORT).show();
 
                 //Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 Log.d("MainActivity", "Scanned");
                 Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Loading Item.", Snackbar.LENGTH_SHORT).show();
-                mWebView.loadUrl("https://daileedeal.com/index.php?route=product/product&manufacturer_id=14&product_id="+result.getContents());
+                mWebView.loadUrl("https://daileedeal.com/index.php?route=product/product&product_id="+result.getContents());
                // Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
             }
         } else {
