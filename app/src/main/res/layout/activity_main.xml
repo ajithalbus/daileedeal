@@ -1,10 +1,11 @@
+<!--
 <android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawer_layout_new"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
+-->
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
 
@@ -12,14 +13,14 @@
     android:layout_height="match_parent"
     android:id="@+id/drawer_layout"
     >
-
+<!--
     <include
         android:id="@+id/toolbar"
-        layout="@layout/toolbar" />
-    <mak.livewire.daileedeal.CustomSwipeRefreshLayout
+        layout="@layout/toolbar" /> -->
+    <mak.livewire.daileedeal.CustomSwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/activity_main_swipe_refresh_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@+id/toolbar">
 
 
@@ -33,12 +34,12 @@
     <WebView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
+
         android:layout_below="@+id/toolbar"
         android:id="@+id/activity_main_webview"/>
 
     </mak.livewire.daileedeal.CustomSwipeRefreshLayout>
-
+<!--
     <android.support.design.widget.FloatingActionButton
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -51,7 +52,7 @@
 
         android:id="@+id/fab"
         android:translationZ="15dp" />
-
+-->
    <!-- <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -74,6 +75,7 @@
 
 
 </RelativeLayout>
+<!--
     <fragment
         android:id="@+id/fragment_navigation_drawer"
         android:name="mak.livewire.daileedeal.activity.FragmentDrawer"
@@ -83,4 +85,4 @@
         app:layout="@layout/fragment_navigation_drawer"
         tools:layout="@layout/fragment_navigation_drawer" />
 
-</android.support.v4.widget.DrawerLayout>
+</android.support.v4.widget.DrawerLayout> -->

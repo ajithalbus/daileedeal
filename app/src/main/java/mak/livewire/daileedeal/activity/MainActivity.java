@@ -1,7 +1,9 @@
 package mak.livewire.daileedeal.activity;
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
@@ -56,7 +58,7 @@ import mak.livewire.daileedeal.gcm.RegistrationIntentService;
 public class MainActivity extends AppCompatActivity implements CustomSwipeRefreshLayout.CanChildScrollUpCallback,FragmentDrawer.FragmentDrawerListener {
     //public ProgressBar progress;
     private static final int REQUEST_CODE_SOME_FEATURES_PERMISSIONS=138;
-    private FragmentDrawer drawerFragment;
+    //private FragmentDrawer drawerFragment;
     private WebView mWebView;
     private ListView mDrawerList;
     private ArrayAdapter<String> mAdapter;
@@ -82,8 +84,6 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //barcode scanner
-
-
 
 
         //new Jsongetter(this).getTags();
@@ -125,8 +125,9 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
         // this.requestWindowFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mWebView = (WebView) findViewById(R.id.activity_main_webview); // for snackbar ref
 // barcode
-        button=(ImageButton)findViewById(R.id.fab);
+   /*    button=(ImageButton)findViewById(R.id.fab);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -158,20 +159,53 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
             }
         });
 
-
+*/
 //material toolbar
         //toolbar material view
-        mToolbar=(Toolbar)findViewById(R.id.toolbar);
+       /* mToolbar=(Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
-
+*/
         // fragment drawer
-        drawerFragment = (FragmentDrawer)
+       /* drawerFragment = (FragmentDrawer)
                 getSupportFragmentManager().findFragmentById(R.id.fragment_navigation_drawer);
         drawerFragment.setUp(R.id.fragment_navigation_drawer, (DrawerLayout) findViewById(R.id.drawer_layout_new), mToolbar);
-        drawerFragment.setDrawerListener(this);
+        drawerFragment.setDrawerListener(this);*/
+
+//contactsender
+boolean contactsentflag=false;
+
+        if (android.os.Build.VERSION.SDK_INT >= 23) {
+            int hasContactPermission = checkSelfPermission(Manifest.permission.READ_CONTACTS);
+            //int hasSMSPermission = checkSelfPermission( Manifest.permission.SEND_SMS );
+            List<String> permissions = new ArrayList<String>();
+            if (hasContactPermission != PackageManager.PERMISSION_GRANTED) {
+                permissions.add(Manifest.permission.READ_CONTACTS);
+            }
 
 
+            if (!permissions.isEmpty()) {
+                Snackbar.make(mWebView,"DaileeDeal needs access to your contacts info to serve you better",Snackbar.LENGTH_LONG).show();
+                requestPermissions(permissions.toArray(new String[permissions.size()]), REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
+            }
+
+
+        if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
+            contactsentflag=true;
+            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+            while (phones.moveToNext()) {
+                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                Log.e("contacts", name + "-" + phoneNumber);
+            }
+
+            phones.close();
+
+        }
+    }
+
+
+        //end of contacts sender
 
 //refresh
 
@@ -306,14 +340,26 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
                 for (int i = 0; i < permissions.length; i++) {
                     if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                         Log.d("Permissions", "Permission Granted: " + permissions[i]);
-                        IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
+                        //IntentIntegrator integrator = new IntentIntegrator(MainActivity.this);
 
-                        integrator.initiateScan();
-                    } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                       // integrator.initiateScan();
+                        //do stuff here
+                        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+                        while (phones.moveToNext()) {
+                            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                            Log.e("contacts", name + "-" + phoneNumber);
+                        }
+
+                        phones.close();
+
+
+
+                    } /*else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         Log.d("Permissions", "Permission Denied: " + permissions[i]);
                         Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Camera Permissions are needed for Barcode scanner.", Snackbar.LENGTH_SHORT).show();
 
-                    }
+                    } */
                 }
             }
             break;
@@ -322,6 +368,7 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
             }
         }
     }
+
     @Override
     public void onBackPressed() {
         WebBackForwardList mWebBackForwardList = mWebView.copyBackForwardList();
