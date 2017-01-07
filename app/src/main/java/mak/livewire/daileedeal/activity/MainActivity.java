@@ -70,32 +70,32 @@ import java.util.List;
 import java.util.Map;
 
 import mak.livewire.daileedeal.CustomSwipeRefreshLayout;
-import mak.livewire.daileedeal.Jsongetter;
+//import mak.livewire.daileedeal.Jsongetter;
 import mak.livewire.daileedeal.gcm.QuickstartPreferences;
 import mak.livewire.daileedeal.R;
 import mak.livewire.daileedeal.gcm.RegistrationIntentService;
 
-public class MainActivity extends AppCompatActivity implements CustomSwipeRefreshLayout.CanChildScrollUpCallback,FragmentDrawer.FragmentDrawerListener {
+public class MainActivity extends AppCompatActivity implements CustomSwipeRefreshLayout.CanChildScrollUpCallback {
     //public ProgressBar progress;
     private JSONArray jsonArray;
     private static final int REQUEST_CODE_SOME_FEATURES_PERMISSIONS=138;
     //private FragmentDrawer drawerFragment;
     private WebView mWebView;
-    private ListView mDrawerList;
-    private ArrayAdapter<String> mAdapter;
+  //  private ListView mDrawerList;
+  //  private ArrayAdapter<String> mAdapter;
   //  private ActionBarDrawerToggle mDrawerToggle;  dep
-    private DrawerLayout mDrawerLayout;
-    private String mActivityTitle;
-    private final int links[] = new int[]{116, 60, 61, 62, 63, 64, 65, 66};
-    private final String base_link = "https://daileedeal.com/index.php?route=product/category&path=";
-    private Toolbar mToolbar;
+ //   private DrawerLayout mDrawerLayout;
+ //   private String mActivityTitle;
+  //  private final int links[] = new int[]{116, 60, 61, 62, 63, 64, 65, 66};
+  //  private final String base_link = "https://daileedeal.com/index.php?route=product/category&path=";
+  //  private Toolbar mToolbar;
     private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private BroadcastReceiver mRegistrationBroadcastReceiver;
     private boolean isReceiverRegistered;
     private Intent intent;
     private String noti_addr;
     private CustomSwipeRefreshLayout mRefreshLayout;
-    private ImageButton button;
+   // private ImageButton button;
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -240,7 +240,7 @@ boolean contactsentflag=false;
         //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         //getSupportActionBar().setHomeButtonEnabled(true);
         //mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout); dep
-        mActivityTitle = getTitle().toString();
+        //mActivityTitle = getTitle().toString();
 
        /* setupDrawer();
 
@@ -540,46 +540,6 @@ boolean contactsentflag=false;
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        /*if (id == R.id.action_settings) {
-            return true;
-        }*/
-        String url = "https://daileedeal.com/index.php?route=";
-        switch (id) {
-            case R.id.myaccount:
-                url = url + "account/account";
-                break;
-            case R.id.wishlist:
-                url = url + "account/wishlist";
-                break;
-            case R.id.shoppingcart:
-                url = url + "checkout/cart";
-                break;
-            case R.id.checkout:
-                url = url + "checkout/checkout";
-                break;
-
-            default:
-                url = null;
-        }
-        if (url != null)
-            mWebView.loadUrl(url);
-        /*if (id == R.id.refresh)
-            mWebView.reload();
-*/
-
-        /*if (mDrawerToggle.onOptionsItemSelected(item)) { dep
-            return true;
-        }*/
-        return super.onOptionsItemSelected(item);
-    }
 
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -622,13 +582,13 @@ boolean contactsentflag=false;
         return mWebView.getScrollY() > 0;
     }
 
-    @Override
+   /* @Override
     public void onDrawerItemSelected(View view, int position) {
         if (position == 0) mWebView.loadUrl("https://daileedeal.com/");
         else mWebView.loadUrl(base_link + links[position - 1]);
     }
     //no menu inflater
-
+*/
     private class MyWebViewClient extends WebViewClient {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
@@ -695,7 +655,7 @@ int len=0;
     {    //Toast.makeText(MainActivity.this,info.toString(),Toast.LENGTH_LONG).show();
         final RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        String url = "http://192.168.12.1";
+        String url = "http://daileedeal.com/contact/";
         StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

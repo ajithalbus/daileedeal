@@ -8,8 +8,8 @@ android {
         applicationId "mak.livewire.daileedeal"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 8
-        versionName "16.10.4"
+        versionCode 9
+        versionName "17.1.7"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
