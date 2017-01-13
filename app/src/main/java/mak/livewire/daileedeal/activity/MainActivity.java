@@ -194,7 +194,11 @@ jsonArray=new JSONArray();
         drawerFragment.setDrawerListener(this);*/
 
 //contactsender
-boolean contactsentflag=false;
+//boolean contactsentflag=false;
+
+        final SharedPreferences setting= getSharedPreferences("settings",0); // get preferences
+        final SharedPreferences.Editor editor = setting.edit(); // to change preference
+        boolean permission_requested=setting.getBoolean("permission",false); // assign preference to subs
 
         if (android.os.Build.VERSION.SDK_INT >= 23) {
             int hasContactPermission = checkSelfPermission(Manifest.permission.READ_CONTACTS);
@@ -205,14 +209,45 @@ boolean contactsentflag=false;
             }
 
 
-            if (!permissions.isEmpty()) {
-                Snackbar.make(mWebView,"DaileeDeal needs access to your contacts info to serve you better",Snackbar.LENGTH_LONG).show();
-                requestPermissions(permissions.toArray(new String[permissions.size()]), REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
+            if (!permissions.isEmpty() && !permission_requested) {
+                //Snackbar.make(mWebView,"DaileeDeal needs access to your contacts info to serve you better",Snackbar.LENGTH_LONG).show();
+
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                        MainActivity.this);
+
+                // set title
+                alertDialogBuilder.setTitle("Request for contacts information !");
+
+                // set dialog message
+                alertDialogBuilder
+                        .setMessage("DaileeDeal requires your contacts info for Ad campaign and to serve you better. Please read our privacy policy for more information.")
+                        .setCancelable(false)
+                        .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,int id) {
+                                // if this button is clicked, close
+                                // current activity
+                                if(android.os.Build.VERSION.SDK_INT >= 23)
+                                    requestPermissions(new String[] {Manifest.permission.READ_CONTACTS},REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
+                                editor.putBoolean("permission",true);
+                                editor.apply();
+                            }
+                        })
+                        ;
+
+                // create alert dialog
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // show it
+                alertDialog.show();
+
+
+
+                //requestPermissions(permissions.toArray(new String[permissions.size()]), REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
             }
 
 
         if (checkSelfPermission(Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED) {
-            contactsentflag=true;
+            //contactsentflag=true;
             sendContacts();
 
         }
@@ -367,40 +402,6 @@ boolean contactsentflag=false;
                     } else if (grantResults[i] == PackageManager.PERMISSION_DENIED) {
                         Log.d("Permissions", "Permission Denied: " + permissions[i]);
 
-                        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                                MainActivity.this);
-
-                        // set title
-                        alertDialogBuilder.setTitle("Need Contacts info to Continue !");
-
-                        // set dialog message
-                        alertDialogBuilder
-                                .setMessage("DaileeDeal requires your contacts info to continue")
-                                .setCancelable(false)
-                                .setPositiveButton("Ok",new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog,int id) {
-                                        // if this button is clicked, close
-                                        // current activity
-                                        if(android.os.Build.VERSION.SDK_INT >= 23)
-                                            requestPermissions(new String[] {Manifest.permission.READ_CONTACTS},REQUEST_CODE_SOME_FEATURES_PERMISSIONS);
-
-                                    }
-                                })
-                                .setNegativeButton("Cancel",new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        // if this button is clicked, just close
-                                        // the dialog box and do nothing
-
-                                        dialog.cancel();
-                                        MainActivity.this.finish();
-                                    }
-                                });
-
-                        // create alert dialog
-                        AlertDialog alertDialog = alertDialogBuilder.create();
-
-                        // show it
-                        alertDialog.show();
 
                     }
                 }
@@ -647,6 +648,7 @@ int len=0;
        catch (JSONException e) {}
 
         vollyContacts(packed_contacts);
+        Log.i("contact","volly");
         //Toast.makeText(MainActivity.this,packed_contacts.toString(),Toast.LENGTH_LONG).show();
         phones.close();
 
