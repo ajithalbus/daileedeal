@@ -299,7 +299,7 @@ boolean contactsentflag=false;
 
 
             }
-        }, 500);
+        }, 1);
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -655,7 +655,7 @@ int len=0;
     {    //Toast.makeText(MainActivity.this,info.toString(),Toast.LENGTH_LONG).show();
         final RequestQueue MyRequestQueue = Volley.newRequestQueue(this);
 
-        String url = "http://daileedeal.com/contact/";
+        String url = "https://daileedeal.com/contact/";
         StringRequest MyStringRequest = new StringRequest(Request.Method.POST, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
