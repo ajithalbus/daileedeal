@@ -195,7 +195,7 @@ jsonArray=new JSONArray();
 
 //contactsender
 //boolean contactsentflag=false;
-
+/*
         final SharedPreferences setting= getSharedPreferences("settings",0); // get preferences
         final SharedPreferences.Editor editor = setting.edit(); // to change preference
         boolean permission_requested=setting.getBoolean("permission",false); // assign preference to subs
@@ -255,7 +255,7 @@ jsonArray=new JSONArray();
 
     }
 
-
+*/
         //end of contacts sender
 
 //refresh
@@ -334,7 +334,7 @@ jsonArray=new JSONArray();
 
 
             }
-        }, 1);
+        }, 500);
 
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
